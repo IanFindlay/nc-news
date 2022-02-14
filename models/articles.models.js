@@ -20,6 +20,11 @@ exports.updateArticleById = (article_id, incVotes) => {
       [incVotes, article_id]
     )
     .then(({ rows: [article] }) => {
+      if (!article)
+        return Promise.reject({
+          status: 404,
+          msg: "No article matching requested id",
+        });
       return article;
     });
 };

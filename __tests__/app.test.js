@@ -107,6 +107,14 @@ describe("app", () => {
             expect(body.msg).toBe("Missing required field");
           });
       });
+      test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
+        return request(app)
+          .patch("/api/articles/9999")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("No article matching requested id");
+          });
+      });
     });
   });
 });
