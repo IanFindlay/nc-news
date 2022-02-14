@@ -39,4 +39,43 @@ describe("app", () => {
       });
     });
   });
+
+  describe("api/articles/:article_id", () => {
+    describe("GET", () => {
+      test("Status 200 - responds with an article object matching the article_id requested", () => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.article).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: `2020-07-09T20:11:00.000Z`,
+                votes: 100,
+              })
+            );
+          });
+      });
+      test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
+        return request(app)
+          .get("/api/articles/9999")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("No article matching requested id");
+          });
+      });
+      test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
+        return request(app)
+          .get("/api/articles/not-an-int")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
+          });
+      });
+    });
+  });
 });
