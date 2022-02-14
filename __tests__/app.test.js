@@ -77,5 +77,61 @@ describe("app", () => {
           });
       });
     });
+    describe("PATCH", () => {
+      test("Status 200 - responds with updated_article object at the requested article_id with votes incremented by request body 'inc_votes' value", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.updated_article).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: `2020-07-09T20:11:00.000Z`,
+                votes: 101,
+              })
+            );
+          });
+      });
+      test("Status 200 - decrements if inc_votes in request body is a negative integer", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: -25 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.updated_article.votes).toBe(75);
+          });
+      });
+      test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain inc_votes property", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Missing required field");
+          });
+      });
+      test("Status 400 - responds with msg 'Bad request' if request body contains inc_votes property but with an invalid value", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: "fifty" })
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
+          });
+      });
+      test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
+        return request(app)
+          .patch("/api/articles/9999")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("No article matching requested id");
+          });
+      });
+    });
   });
 });
