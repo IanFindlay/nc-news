@@ -77,5 +77,27 @@ describe("app", () => {
           });
       });
     });
+    describe("PATCH", () => {
+      test("Status 200 - responds with updated_article object at the requested article_id with votes incremented by request body 'inc_votes' value", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.updated_article.article_id).toBe(1);
+            expect(body.updated_article.votes).toBe(101);
+          });
+      });
+      test("Status 200 - decrements if inc_votes in request body is a negative integer", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({ inc_votes: -25 })
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.updated_article.article_id).toBe(1);
+            expect(body.updated_article.votes).toBe(75);
+          });
+      });
+    });
   });
 });
