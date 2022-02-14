@@ -98,6 +98,15 @@ describe("app", () => {
             expect(body.updated_article.votes).toBe(75);
           });
       });
+      test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain inc_votes property", () => {
+        return request(app)
+          .patch("/api/articles/1")
+          .send({})
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Missing required field");
+          });
+      });
     });
   });
 });
