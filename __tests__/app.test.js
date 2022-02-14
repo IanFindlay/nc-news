@@ -47,15 +47,17 @@ describe("app", () => {
           .get("/api/articles/1")
           .expect(200)
           .then(({ body }) => {
-            expect(body).toEqual({
-              article_id: 1,
-              title: "Living in the shadow of a great man",
-              topic: "mitch",
-              author: "butter_bridge",
-              body: "I find this existence challenging",
-              created_at: `2020-07-09T20:11:00.000Z`,
-              votes: 100,
-            });
+            expect(body.article).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: `2020-07-09T20:11:00.000Z`,
+                votes: 100,
+              })
+            );
           });
       });
       test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
