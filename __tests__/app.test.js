@@ -66,6 +66,14 @@ describe("app", () => {
             expect(body.msg).toBe("No article matching requested id");
           });
       });
+      test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
+        return request(app)
+          .get("/api/articles/not-an-int")
+          .expect(400)
+          .then(({ body }) => {
+            expect(body.msg).toBe("Bad request");
+          });
+      });
     });
   });
 });
