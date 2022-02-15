@@ -14,8 +14,8 @@ describe("app", () => {
       return request(app)
         .get("/api/not-an-endpoint")
         .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("Path not found");
+        .then(({ body: { msg } }) => {
+          expect(msg).toBe("Path not found");
         });
     });
   });
@@ -25,9 +25,9 @@ describe("app", () => {
         return request(app)
           .get("/api/topics")
           .expect(200)
-          .then(({ body }) => {
-            expect(body.topics).toHaveLength(3);
-            body.topics.forEach((topic) => {
+          .then(({ body: { topics } }) => {
+            expect(topics).toHaveLength(3);
+            topics.forEach((topic) => {
               expect(topic).toEqual(
                 expect.objectContaining({
                   slug: expect.any(String),
@@ -46,8 +46,8 @@ describe("app", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
-          .then(({ body }) => {
-            expect(body.article).toEqual(
+          .then(({ body: { article } }) => {
+            expect(article).toEqual(
               expect.objectContaining({
                 article_id: 1,
                 title: "Living in the shadow of a great man",
@@ -64,16 +64,16 @@ describe("app", () => {
         return request(app)
           .get("/api/articles/9999")
           .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("No article matching requested id");
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No article matching requested id");
           });
       });
       test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
         return request(app)
           .get("/api/articles/not-an-int")
           .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toBe("Bad request");
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
           });
       });
     });
@@ -83,8 +83,8 @@ describe("app", () => {
           .patch("/api/articles/1")
           .send({ inc_votes: 1 })
           .expect(200)
-          .then(({ body }) => {
-            expect(body.updated_article).toEqual(
+          .then(({ body: { updated_article } }) => {
+            expect(updated_article).toEqual(
               expect.objectContaining({
                 article_id: 1,
                 title: "Living in the shadow of a great man",
@@ -102,8 +102,8 @@ describe("app", () => {
           .patch("/api/articles/1")
           .send({ inc_votes: -25 })
           .expect(200)
-          .then(({ body }) => {
-            expect(body.updated_article.votes).toBe(75);
+          .then(({ body: { updated_article } }) => {
+            expect(updated_article.votes).toBe(75);
           });
       });
       test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain inc_votes property", () => {
@@ -111,8 +111,8 @@ describe("app", () => {
           .patch("/api/articles/1")
           .send({})
           .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toBe("Missing required field");
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Missing required field");
           });
       });
       test("Status 400 - responds with msg 'Bad request' if request body contains inc_votes property but with an invalid value", () => {
@@ -120,16 +120,16 @@ describe("app", () => {
           .patch("/api/articles/1")
           .send({ inc_votes: "fifty" })
           .expect(400)
-          .then(({ body }) => {
-            expect(body.msg).toBe("Bad request");
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
           });
       });
       test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
         return request(app)
           .patch("/api/articles/9999")
           .expect(404)
-          .then(({ body }) => {
-            expect(body.msg).toBe("No article matching requested id");
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No article matching requested id");
           });
       });
     });
