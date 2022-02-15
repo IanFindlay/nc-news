@@ -68,6 +68,14 @@ describe("app", () => {
             expect(article.comment_count).toBe(2);
           });
       });
+      test("Status 200 - comment_count is 0 for articles with no comments", () => {
+        return request(app)
+          .get("/api/articles/2")
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article.comment_count).toBe(0);
+          });
+      });
       test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
         return request(app)
           .get("/api/articles/9999")
