@@ -28,3 +28,9 @@ exports.updateArticleById = (articleId, incVotes) => {
       return article;
     });
 };
+
+exports.selectArticles = () => {
+  return db
+    .query("SELECT * FROM articles ORDER BY created_at DESC;")
+    .then(({ rows: articles }) => articles);
+};
