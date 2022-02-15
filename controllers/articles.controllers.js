@@ -4,8 +4,8 @@ const {
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
-  const article_id = req.params.article_id;
-  selectArticleById(article_id)
+  const articleId = req.params.article_id;
+  selectArticleById(articleId)
     .then((article) => {
       res.status(200).send({ article });
     })
@@ -13,11 +13,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.patchArticleById = (req, res, next) => {
-  const article_id = req.params.article_id;
+  const articleId = req.params.article_id;
   const incVotes = req.body.inc_votes;
-  updateArticleById(article_id, incVotes)
-    .then((updated_article) => {
-      res.status(200).send({ updated_article });
+  updateArticleById(articleId, incVotes)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

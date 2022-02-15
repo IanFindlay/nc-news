@@ -1,8 +1,8 @@
 const db = require("../db/connection");
 
-exports.selectArticleById = (article_id) => {
+exports.selectArticleById = (articleId) => {
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+    .query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
     .then(({ rows: [article] }) => {
       if (!article)
         return Promise.reject({
@@ -13,11 +13,11 @@ exports.selectArticleById = (article_id) => {
     });
 };
 
-exports.updateArticleById = (article_id, incVotes) => {
+exports.updateArticleById = (articleId, incVotes) => {
   return db
     .query(
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
-      [incVotes, article_id]
+      [incVotes, articleId]
     )
     .then(({ rows: [article] }) => {
       if (!article)

@@ -78,13 +78,13 @@ describe("app", () => {
       });
     });
     describe("PATCH", () => {
-      test("Status 200 - responds with updated_article object at the requested article_id with votes incremented by request body 'inc_votes' value", () => {
+      test("Status 200 - responds with an updated article object at the requested article_id with votes incremented by request body 'inc_votes' value", () => {
         return request(app)
           .patch("/api/articles/1")
           .send({ inc_votes: 1 })
           .expect(200)
-          .then(({ body: { updated_article } }) => {
-            expect(updated_article).toEqual(
+          .then(({ body: { article } }) => {
+            expect(article).toEqual(
               expect.objectContaining({
                 article_id: 1,
                 title: "Living in the shadow of a great man",
@@ -102,8 +102,8 @@ describe("app", () => {
           .patch("/api/articles/1")
           .send({ inc_votes: -25 })
           .expect(200)
-          .then(({ body: { updated_article } }) => {
-            expect(updated_article.votes).toBe(75);
+          .then(({ body: { article } }) => {
+            expect(article.votes).toBe(75);
           });
       });
       test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain inc_votes property", () => {
