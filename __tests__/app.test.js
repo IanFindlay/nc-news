@@ -60,6 +60,14 @@ describe("app", () => {
             );
           });
       });
+      test("Status 200 - article object has a comment_count property with a value matching the number of comments linked to that article", () => {
+        return request(app)
+          .get("/api/articles/3")
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article.comment_count).toBe(2);
+          });
+      });
       test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
         return request(app)
           .get("/api/articles/9999")
