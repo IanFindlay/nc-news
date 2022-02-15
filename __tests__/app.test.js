@@ -135,6 +135,24 @@ describe("app", () => {
     });
   });
 
+  describe("/api/users", () => {
+    describe("GET", () => {
+      test("Status 200 - responds with array of user objects under the key of users each with a username property", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body: { users } }) => {
+            expect(users).toHaveLength(4);
+            users.forEach((user) => {
+              expect(user).toEqual(
+                expect.objectContaining({ username: expect.any(String) })
+              );
+            });
+          });
+      });
+    });
+  });
+
   describe("/api/articles", () => {
     describe("GET", () => {
       test("Status 200 - responds with an object containing a key of articles with a value of an array of article objects sorted by date (created_at) in descending order", () => {
