@@ -180,7 +180,7 @@ describe("app", () => {
   });
 
   describe("/api/articles/:article_id/comments", () => {
-    describe.only("GET", () => {
+    describe("GET", () => {
       test("Status 200 - responds with an object with a key of comments and a value of an array of comment objects associated with the requested article_id", () => {
         return request(app)
           .get("/api/articles/9/comments")
@@ -198,6 +198,30 @@ describe("app", () => {
                 })
               );
             });
+          });
+      });
+      test("Status 200 - responds with empty array if article is valid, exists in the database but doesn't have any comments associated with it", () => {
+        return request(app)
+          .get("/api/articles/2/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toEqual([]);
+          });
+      });
+      test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
+        return request(app)
+          .get("/api/articles/9999/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No article matching requested id");
+          });
+      });
+      test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
+        return request(app)
+          .get("/api/articles/not-an-int/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
           });
       });
     });

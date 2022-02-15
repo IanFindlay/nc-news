@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkExists } = require("../db/helpers/utils");
 
 exports.selectCommentsByArticleId = (articleId) => {
   return db
