@@ -21,32 +21,6 @@ describe("app", () => {
     });
   });
 
-  describe("utilities", () => {
-    describe("checkExists", () => {
-      test("Returns a fulfilled promise (value of undefined) when value argument does exist within the argument table under the argument column", () => {
-        return checkExists(
-          "comments",
-          "article_id",
-          1,
-          "error message argument"
-        ).then((response) => {
-          expect(response).toBe(undefined);
-        });
-      });
-      test("Returns rejected promise with a value of an error object (404, custom message) if value argument doesn't exist in the argument table under the argument column", () => {
-        return checkExists(
-          "comments",
-          "article_id",
-          2,
-          "error message argument"
-        ).catch((err) => {
-          expect(err.status).toBe(404);
-          expect(err.msg).toBe("error message argument");
-        });
-      });
-    });
-  });
-
   describe("/api/topics", () => {
     describe("GET", () => {
       test("Status 200 - responds with an object with a key of topics with a value of an array of objects each with a 'slug' and 'description' property", () => {

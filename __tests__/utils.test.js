@@ -1,7 +1,10 @@
+const db = require("../db/connection");
+
 const {
   convertTimestampToDate,
   createRef,
   formatComments,
+  checkExists,
 } = require("../db/helpers/utils");
 
 describe("convertTimestampToDate", () => {
@@ -100,5 +103,30 @@ describe("formatComments", () => {
     const comments = [{ created_at: timestamp }];
     const formattedComments = formatComments(comments, {});
     expect(formattedComments[0].created_at).toEqual(new Date(timestamp));
+  });
+});
+
+describe("checkExists", () => {
+  afterAll(() => db.end());
+  test("Returns a fulfilled promise (value of undefined) when value argument does exist within the argument table under the argument column", () => {
+    return checkExists(
+      "comments",
+      "article_id",
+      1,
+      "error message argument"
+    ).then((response) => {
+      expect(response).toBe(undefined);
+    });
+  });
+  test("Returns rejected promise with a value of an error object (404, custom message) if value argument doesn't exist in the argument table under the argument column", () => {
+    return checkExists(
+      "comments",
+      "article_id",
+      2,
+      "error message argument"
+    ).catch((err) => {
+      expect(err.status).toBe(404);
+      expect(err.msg).toBe("error message argument");
+    });
   });
 });
