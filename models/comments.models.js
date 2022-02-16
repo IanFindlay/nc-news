@@ -6,7 +6,7 @@ exports.selectCommentsByArticleId = (articleId) => {
       `
   SELECT comment_id, votes, created_at, author, body
   FROM comments
-  WHERE article_id = $1
+  WHERE article_id = $1;
     `,
       [articleId]
     )
