@@ -1,4 +1,5 @@
 const app = require("../app");
+const { checkExists } = require("../db/helpers/utils");
 const db = require("../db/connection");
 const data = require("../db/data");
 const seed = require("../db/seeds/seed");
@@ -19,6 +20,7 @@ describe("app", () => {
         });
     });
   });
+
   describe("/api/topics", () => {
     describe("GET", () => {
       test("Status 200 - responds with an object with a key of topics with a value of an array of objects each with a 'slug' and 'description' property", () => {
@@ -190,6 +192,54 @@ describe("app", () => {
                 })
               );
             });
+          });
+      });
+    });
+  });
+
+  describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+      test("Status 200 - responds with an object with a key of comments and a value of an array of comment objects associated with the requested article_id", () => {
+        return request(app)
+          .get("/api/articles/9/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(2);
+            comments.forEach((comment) => {
+              expect(comment).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  votes: expect.any(Number),
+                  created_at: expect.any(String),
+                  author: expect.any(String),
+                  body: expect.any(String),
+                })
+              );
+            });
+          });
+      });
+      test("Status 200 - responds with empty array if article is valid, exists in the database but doesn't have any comments associated with it", () => {
+        return request(app)
+          .get("/api/articles/2/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toEqual([]);
+          });
+      });
+      test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
+        return request(app)
+          .get("/api/articles/9999/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No article matching requested id");
+          });
+      });
+      test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
+        return request(app)
+          .get("/api/articles/not-an-int/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
           });
       });
     });

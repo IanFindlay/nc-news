@@ -7,6 +7,9 @@ const {
   getArticles,
 } = require("./controllers/articles.controllers");
 const { getUsers } = require("./controllers/users.controllers");
+const {
+  getCommentsByArticleId,
+} = require("./controllers/comments.controllers");
 
 const {
   handleInvalidEndpoint,
@@ -24,6 +27,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/users", getUsers);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
 app.all("/*", handleInvalidEndpoint);
 
