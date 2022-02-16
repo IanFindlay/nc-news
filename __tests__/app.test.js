@@ -194,6 +194,17 @@ describe("app", () => {
             });
           });
       });
+      test("Status 200 - article objects have a comment_count property (integer corresponding to the number of comments associated with the article)", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            articles.forEach((article) => {
+              expect(typeof article.comment_count).toBe("number");
+              if (article.id === 2) expect(article.comment_count).toBe(0);
+            });
+          });
+      });
     });
   });
 
