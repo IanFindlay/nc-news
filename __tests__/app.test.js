@@ -254,5 +254,68 @@ describe("app", () => {
           });
       });
     });
+    describe("POST", () => {
+      test("Status 201 - responds with an object with a key of comment with a value of the new comment object added via the request", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({ username: "butter_bridge", body: "New comment" })
+          .expect(201)
+          .then(({ body: { comment } }) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: "butter_bridge",
+                body: "New comment",
+              })
+            );
+          });
+      });
+      test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain username or body property", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({ username: "butter_bridge" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Missing required field");
+          })
+          .then(() => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({ body: "No username" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).toBe("Missing required field");
+              });
+          });
+      });
+      test("Status 400 - responds with msg 'Bad request' if request body contains username not currently in the users table", () => {
+        return request(app)
+          .post("/api/articles/1/comments")
+          .send({ username: "unknown_user", body: "" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+      test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
+        return request(app)
+          .get("/api/articles/not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+      test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
+        return request(app)
+          .post("/api/articles/9999/comments")
+          .send({ username: "unknown_user", body: "" })
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No article matching requested id");
+          });
+      });
+    });
   });
 });
