@@ -9,6 +9,7 @@ const {
 const { getUsers } = require("./controllers/users.controllers");
 const {
   getCommentsByArticleId,
+  postCommentByArticleId,
 } = require("./controllers/comments.controllers");
 
 const {
@@ -28,6 +29,7 @@ app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/users", getUsers);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 app.all("/*", handleInvalidEndpoint);
 
