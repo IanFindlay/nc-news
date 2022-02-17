@@ -62,7 +62,7 @@ PGDATABASE=nc_news_test
 
 Both of these files are already included in the .gitignore and will not be tracked.
 
-### Creating And seeding the databases
+### Creating and seeding the databases
 
 Now run the following two commands - the first creates both the development and tests databases and the second seeds them with data
 
@@ -79,7 +79,7 @@ Jest, a popular JavaScript testing framework, was installed as part of the insta
 npm t
 ```
 
-### Start using it
+### Using it
 
 To start a locally hosted version of the app run the following command:
 
