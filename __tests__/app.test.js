@@ -325,8 +325,7 @@ describe("app", () => {
         return request(app)
           .delete("/api/comments/2")
           .expect(204)
-          .then(({ body }) => {
-            expect(body).toEqual({});
+          .then(() => {
             return request(app)
               .get("/api/articles/1/comments")
               .expect(200)
