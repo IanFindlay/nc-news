@@ -205,6 +205,75 @@ describe("app", () => {
             });
           });
       });
+      test("Status 200 - user can decided order with order query - defaults to descending", () => {
+        return request(app)
+          .get("/api/articles?order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toBeSortedBy("created_at");
+          });
+      });
+      test("Status 200 - user can sort by any valid column with the sort_by query", () => {
+        return request(app)
+          .get("/api/articles?sort_by=date")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toBeSortedBy("created_at", {
+              descending: true,
+            });
+          });
+      });
+      test("Status 200 - sort_by query works for comment_count", () => {
+        return request(app)
+          .get("/api/articles?sort_by=comment_count")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toBeSortedBy("comment_count", {
+              descending: true,
+            });
+          });
+      });
+      test("Status 200 - user can filter by topic with the topic query (exact match only)", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(11);
+          });
+      });
+      test("Status 200 - user can combine queries", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch&sort_by=author&order=asc")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(11);
+            expect(articles).toBeSortedBy("author");
+          });
+      });
+      test("Status 404 - responds with error object with msg 'No articles found with that topic' when the topic query results in no articles", () => {
+        return request(app)
+          .get("/api/articles?topic=does-not-exist")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No articles found with that topic");
+          });
+      });
+      test("Status 400 - responds with error object with msg 'Invalid order query - use 'asc' or 'desc'' when order query is invalid", () => {
+        return request(app)
+          .get("/api/articles?order=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid order query - use 'asc' or 'desc'");
+          });
+      });
+      test("Status 400 - responds with error object with msg 'Invalid sort_by query' when sort_by query is invalid", () => {
+        return request(app)
+          .get("/api/articles?sort_by=invalid")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Invalid sort_by query");
+          });
+      });
     });
   });
 
