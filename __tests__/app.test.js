@@ -21,6 +21,20 @@ describe("app", () => {
     });
   });
 
+  describe("/api", () => {
+    describe("GET", () => {
+      test("Status 200 - responds with an object detailing the available endpoints", () => {
+        return request(app)
+          .get("/api")
+          .expect(200)
+          .then(({ body }) => {
+            expect(typeof body).toBe("object");
+            expect(body["GET /api"]).not.toBe(undefined);
+          });
+      });
+    });
+  });
+
   describe("/api/topics", () => {
     describe("GET", () => {
       test("Status 200 - responds with an object with a key of topics with a value of an array of objects each with a 'slug' and 'description' property", () => {
