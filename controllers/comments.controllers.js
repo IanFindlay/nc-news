@@ -1,6 +1,7 @@
 const {
   selectCommentsByArticleId,
   insertCommentByArticleId,
+  deleteCommentById,
 } = require("../models/comments.models");
 const { checkExists } = require("../db/helpers/utils");
 
@@ -38,6 +39,20 @@ exports.postCommentByArticleId = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
+exports.removeCommentById = (req, res, next) => {
+  const { comment_id: commentId } = req.params;
+  return deleteCommentById(commentId)
+    .then((comment) => {
+      if (!comment)
+        return Promise.reject({
+          status: 404,
+          msg: "No comment matching requested id",
+        });
+      return res.status(204).send();
     })
     .catch(next);
 };

@@ -387,4 +387,38 @@ describe("app", () => {
       });
     });
   });
+
+  describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+      test("Status 204 - no response sent back", () => {
+        return request(app)
+          .delete("/api/comments/2")
+          .expect(204)
+          .then(() => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).toHaveLength(10);
+              });
+          });
+      });
+      test("404 - responds with msg 'No comment matching requested id' when comment_id is valid but not currently in the database", () => {
+        return request(app)
+          .delete("/api/comments/999")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No comment matching requested id");
+          });
+      });
+      test("400 - responds with 'Bad request' if requested comment_id isn't an integer", () => {
+        return request(app)
+          .delete("/api/comments/not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+    });
+  });
 });
