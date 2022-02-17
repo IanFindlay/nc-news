@@ -29,5 +29,5 @@ exports.insertCommentByArticleId = (articleId, newComment) => {
 };
 
 exports.deleteCommentById = (commentId) => {
-  return db.query("DELETE FROM comments WHERE comment_id = $1", [commentId]);
+  return db.query("DELETE FROM comments WHERE comment_id = $1;", [commentId]);
 };
