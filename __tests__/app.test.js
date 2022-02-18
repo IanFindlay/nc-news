@@ -185,6 +185,33 @@ describe("app", () => {
     });
   });
 
+  describe("/api/users/:username", () => {
+    describe("GET", () => {
+      test("Status 200 - responds with a user object under the key of user with the username specified in the paramter", () => {
+        return request(app)
+          .get("/api/users/butter_bridge")
+          .expect(200)
+          .then(({ body: { user } }) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: "butter_bridge",
+                avatar_url: expect.any(String),
+                name: expect.any(String),
+              })
+            );
+          });
+      });
+      test("Status 404 - responds with msg 'No user matching requested username' when username is valid but there isn't a user with that username currently in the database", () => {
+        return request(app)
+          .get("/api/users/does-not-exist")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No user matching requested username");
+          });
+      });
+    });
+  });
+
   describe("/api/articles", () => {
     describe("GET", () => {
       test("Status 200 - responds with an object containing a key of articles with a value of an array of article objects sorted by date (created_at) in descending order", () => {

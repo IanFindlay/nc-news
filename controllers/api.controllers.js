@@ -25,6 +25,22 @@ exports.getEndpoints = (_, res, next) => {
       },
     },
 
+    "GET /api/users/:username": {
+      description:
+        "Responds with a user object matching the username parameter",
+      queries: [],
+      expectedStatus: 200,
+      exampleResponse: {
+        user: [
+          {
+            username: "username",
+            name: "name",
+            avatar_url: "Link to avatar picture",
+          },
+        ],
+      },
+    },
+
     "GET /api/articles": {
       description: "Responds with an array of articles",
       queries: [
