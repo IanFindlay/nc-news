@@ -461,5 +461,60 @@ describe("app", () => {
           });
       });
     });
+    describe("PATCH", () => {
+      test("Status 200 - responds with an updated comment object at the requested comment_id with votes incremented by request body 'inc_votes' value", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: 4 })
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                created_at: expect.any(String),
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                comment_id: 1,
+                article_id: 9,
+                author: "butter_bridge",
+                votes: 20,
+              })
+            );
+          });
+      });
+      test("Status 200 - decrements if inc_votes in request body is a negative integer", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: -6 })
+          .expect(200)
+          .then(({ body: { comment } }) => {
+            expect(comment.votes).toBe(10);
+          });
+      });
+      test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain inc_votes property", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({})
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Missing required field");
+          });
+      });
+      test("Status 400 - responds with msg 'Bad request' if request body contains inc_votes property but with an invalid value", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: "fifty" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+      test("Status 404 - responds with msg 'No comment matching requested id' when comment_id is valid but there isn't a comment with that id currently in the database", () => {
+        return request(app)
+          .patch("/api/comments/9999")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No comment matching requested id");
+          });
+      });
+    });
   });
 });
