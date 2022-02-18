@@ -316,6 +316,82 @@ describe("app", () => {
           });
       });
     });
+    describe("POST", () => {
+      test("Status 201 - responds with an object with a key of article with a value of the new article object added via the request", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            title: "title",
+            body: "body",
+            topic: "cats",
+          })
+          .expect(201)
+          .then(({ body: { article } }) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                created_at: expect.any(String),
+                author: "lurker",
+                title: "title",
+                body: "body",
+                article_id: 13,
+                topic: "cats",
+                votes: 0,
+                comment_count: 0,
+              })
+            );
+          })
+          .then(() => {
+            return request(app)
+              .get("/api/articles")
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                expect(articles).toHaveLength(13);
+              });
+          });
+      });
+      test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain all of the required properties", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            title: "no body",
+            topic: "cats",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Missing required field");
+          });
+      });
+      test("Status 400 - responds with msg 'Bad request' if request body contains author not currently in the users table", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "unknown_user",
+            title: "title",
+            body: "body",
+            topic: "cats",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+      test("Status 400 - responds with msg 'Bad request' if request body contains topic not currently in the topics table", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            author: "lurker",
+            title: "title",
+            body: "body",
+            topic: "unknown_topic",
+          })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+    });
   });
 
   describe("/api/articles/:article_id/comments", () => {
