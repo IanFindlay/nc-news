@@ -146,5 +146,21 @@ exports.getEndpoints = (_, res, next) => {
       expectedStatus: 204,
       exampleResponse: {},
     },
+
+    "PATCH /api/comments/:comment_id": {
+      description:
+        "Changes the 'votes' for the comment at the comment_id parameter by the value (positive or negative integer) specified in the request body's inc_votes property and returns the updated comment.",
+      queries: [],
+      expectedStatus: 204,
+      exampleRequest: { inc_votes: -10 },
+      exampleResponse: {
+        comment_id: "integer",
+        article_id: "integer",
+        created_at: "date",
+        author: "author",
+        votes: "integer",
+        body: "the content of the comment",
+      },
+    },
   });
 };
