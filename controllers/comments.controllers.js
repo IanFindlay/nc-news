@@ -46,12 +46,7 @@ exports.postCommentByArticleId = (req, res, next) => {
 exports.removeCommentById = (req, res, next) => {
   const { comment_id: commentId } = req.params;
   return deleteCommentById(commentId)
-    .then((comment) => {
-      if (!comment)
-        return Promise.reject({
-          status: 404,
-          msg: "No comment matching requested id",
-        });
+    .then(() => {
       return res.status(204).send();
     })
     .catch(next);
