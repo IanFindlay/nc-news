@@ -42,3 +42,19 @@ exports.deleteCommentById = (commentId) => {
       return comment;
     });
 };
+
+exports.updateCommentById = (incVotes, commentId) => {
+  return db
+    .query(
+      "UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *;",
+      [incVotes, commentId]
+    )
+    .then(({ rows: [comment] }) => {
+      if (!comment)
+        return Promise.reject({
+          status: 404,
+          msg: "No comment matching requested id",
+        });
+      return comment;
+    });
+};

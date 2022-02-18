@@ -2,6 +2,7 @@ const {
   selectCommentsByArticleId,
   insertCommentByArticleId,
   deleteCommentById,
+  updateCommentById,
 } = require("../models/comments.models");
 const { checkExists } = require("../db/helpers/utils");
 
@@ -48,6 +49,16 @@ exports.removeCommentById = (req, res, next) => {
   return deleteCommentById(commentId)
     .then(() => {
       return res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.patchCommentById = (req, res, next) => {
+  const { comment_id: commentId } = req.params;
+  const { inc_votes: incVotes } = req.body;
+  return updateCommentById(incVotes, commentId)
+    .then((comment) => {
+      return res.status(200).send({ comment });
     })
     .catch(next);
 };
