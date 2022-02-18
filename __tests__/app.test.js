@@ -507,6 +507,15 @@ describe("app", () => {
             expect(msg).toBe("Bad request");
           });
       });
+      test("Status 400 - responds with 'Bad request' if requested comment_id isn't an integer", () => {
+        return request(app)
+          .patch("/api/comments/not-an-int")
+          .send({ inc_votes: 1 })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
       test("Status 404 - responds with msg 'No comment matching requested id' when comment_id is valid but there isn't a comment with that id currently in the database", () => {
         return request(app)
           .patch("/api/comments/9999")
