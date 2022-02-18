@@ -5,3 +5,14 @@ exports.selectUsers = () => {
     .query("SELECT username FROM users;")
     .then(({ rows: users }) => users);
 };
+
+exports.selectUserByUsername = (username) => {
+  return db
+    .query(
+      `
+  SELECT username, avatar_url, name FROM users
+  WHERE username = $1;`,
+      [username]
+    )
+    .then(({ rows: [user] }) => user);
+};
