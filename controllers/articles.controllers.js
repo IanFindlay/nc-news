@@ -2,6 +2,7 @@ const {
   selectArticleById,
   updateArticleById,
   selectArticles,
+  insertArticle,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -28,6 +29,15 @@ exports.getArticles = (req, res, next) => {
   selectArticles(sortBy, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.postArticle = (req, res, next) => {
+  const newArticle = req.body;
+  insertArticle(newArticle)
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };

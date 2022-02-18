@@ -85,3 +85,22 @@ exports.selectArticles = (sortBy, order, topic) => {
     return articles;
   });
 };
+
+exports.insertArticle = (newArticle) => {
+  const { title, topic, author, body } = newArticle;
+  return db
+    .query(
+      `
+    INSERT INTO articles
+      (title, topic, author, body)
+    VALUES
+      ($1, $2, $3, $4)
+    RETURNING *;
+    `,
+      [title, topic, author, body]
+    )
+    .then(({ rows: [article] }) => {
+      article.comment_count = 0;
+      return article;
+    });
+};
