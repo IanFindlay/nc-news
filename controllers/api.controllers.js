@@ -64,6 +64,33 @@ exports.getEndpoints = (_, res, next) => {
       },
     },
 
+    "POST /api/articles": {
+      description:
+        "Post a new article - responds with an object representing the newly added article",
+      queries: [],
+      expectedStatus: 200,
+      exampleRequest: {
+        author: "author",
+        title: "title",
+        body: "Contents of article",
+        topic: "topic",
+      },
+      exampleResponse: {
+        articles: [
+          {
+            article_id: "number",
+            author: "author",
+            title: "title",
+            body: "Contents of article",
+            created_at: "date",
+            topic: "topic",
+            votes: "number",
+            comment_count: "number of comments on this article",
+          },
+        ],
+      },
+    },
+
     "GET /api/articles/:article_id": {
       description:
         "Responds with an article object matching the article_id parameter",
