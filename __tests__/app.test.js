@@ -156,7 +156,7 @@ describe("app", () => {
             expect(msg).toBe("Bad request");
           });
       });
-      test("Status 400 - responds with 'Bad request' if requested comment_id isn't an integer", () => {
+      test("Status 400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
         return request(app)
           .patch("/api/articles/not-an-int")
           .send({ inc_votes: 1 })
