@@ -185,7 +185,7 @@ describe("app", () => {
     });
   });
 
-  describe.only("/api/users/:username", () => {
+  describe("/api/users/:username", () => {
     describe("GET", () => {
       test("Status 200 - responds with a user object under the key of user with the username specified in the paramter", () => {
         return request(app)
@@ -199,6 +199,14 @@ describe("app", () => {
                 name: expect.any(String),
               })
             );
+          });
+      });
+      test("Status 404 - responds with msg 'No user matching requested username' when username is valid but there isn't a user with that username currently in the database", () => {
+        return request(app)
+          .get("/api/users/does-not-exist")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No user matching requested username");
           });
       });
     });

@@ -14,5 +14,12 @@ exports.selectUserByUsername = (username) => {
   WHERE username = $1;`,
       [username]
     )
-    .then(({ rows: [user] }) => user);
+    .then(({ rows: [user] }) => {
+      if (!user)
+        return Promise.reject({
+          status: 404,
+          msg: "No user matching requested username",
+        });
+      return user;
+    });
 };
