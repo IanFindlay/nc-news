@@ -33,5 +33,12 @@ exports.deleteCommentById = (commentId) => {
     .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [
       commentId,
     ])
-    .then(({ rows: [comment] }) => comment);
+    .then(({ rows: [comment] }) => {
+      if (!comment)
+        return Promise.reject({
+          status: 404,
+          msg: "No comment matching requested id",
+        });
+      return comment;
+    });
 };
