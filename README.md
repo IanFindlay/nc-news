@@ -17,6 +17,7 @@ This project is a demonstration of setting up a RESTful api. Written in JavaScri
 - GET all of the comments associated with a specific article
 - POST a new comment to a specific article
 - DELETE a specific comment
+- GET a specific user
 
 ## Setup Instructions
 
