@@ -70,10 +70,10 @@ exports.getEndpoints = (_, res, next) => {
       queries: [],
       expectedStatus: 200,
       exampleRequest: {
-        author: "author",
+        author: "author (must already be in the users table)",
         title: "title",
         body: "Contents of article",
-        topic: "topic",
+        topic: "topic (must already be in the topics table)",
       },
       exampleResponse: {
         articles: [
