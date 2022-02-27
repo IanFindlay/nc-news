@@ -8,6 +8,7 @@ const { checkExists } = require("../db/helpers/utils");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const articleId = req.params.article_id;
+  const { limit, p: page } = req.query;
   const idExists = checkExists(
     "articles",
     "article_id",
@@ -16,7 +17,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
   );
   return Promise.all([articleId, idExists])
     .then(([articleId]) => {
-      return selectCommentsByArticleId(articleId);
+      return selectCommentsByArticleId(articleId, limit, page);
     })
     .then((comments) => {
       res.status(200).send({ comments });
