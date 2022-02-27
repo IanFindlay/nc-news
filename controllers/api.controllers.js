@@ -137,7 +137,10 @@ exports.getEndpoints = (_, res, next) => {
     "GET /api/articles/:article_id/comments": {
       description:
         "Responds with an array of all of the comments associated with the article specified in the article_id parameter",
-      queries: [],
+      queries: [
+        "limit - number of articles to display per page (defaults to 10)",
+        "p - which page of results to retrieve (defaults to 1)",
+      ],
       expectedStatus: 200,
       exampleResponse: {
         comments: [
