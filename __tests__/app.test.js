@@ -333,15 +333,15 @@ describe("app", () => {
             expect(articles).toHaveLength(2);
           });
       });
-      test("Status 400 - 'Limit and p queries must be positive integers' if p query isn't an integer", () => {
+      test("Status 400 - 'Bad request' if p query isn't an integer", () => {
         return request(app)
           .get("/api/articles?p=not-an-int")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Limit and p queries must be positive integers");
+            expect(msg).toBe("Bad request");
           });
       });
-      test("Status 400 - responds with msg 'Limit must be a positive integer' for negative limits", () => {
+      test("Status 400 - responds with msg 'Limit and p queries must be positive integers' for negative limits", () => {
         return request(app)
           .get("/api/articles?limit=-5")
           .expect(400)
@@ -349,12 +349,12 @@ describe("app", () => {
             expect(msg).toBe("Limit and p queries must be positive integers");
           });
       });
-      test("Status 400 - responds with msg 'Limit and/or p queries must be positive integers' for non-integer limits", () => {
+      test("Status 400 - responds with msg 'Bad request' for non-integer limits", () => {
         return request(app)
           .get("/api/articles?limit=not-an-int")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Limit and p queries must be positive integers");
+            expect(msg).toBe("Bad request");
           });
       });
       test("Status 404 - responds with error object with msg 'End of articles reached - lower your limit or p query' when the p query results in no articles", () => {
@@ -523,12 +523,12 @@ describe("app", () => {
             expect(comments).toHaveLength(1);
           });
       });
-      test("Status 400 - 'Limit and p queries must be positive integers' if p query isn't an integer", () => {
+      test("Status 400 - 'Bad request' if p query isn't an integer", () => {
         return request(app)
           .get("/api/articles/1/comments?p=not-an-int")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Limit and p queries must be positive integers");
+            expect(msg).toBe("Bad request");
           });
       });
       test("Status 400 - responds with msg 'Limit and p queries must be positive integers' for negative p queries", () => {
@@ -547,12 +547,12 @@ describe("app", () => {
             expect(msg).toBe("Limit and p queries must be positive integers");
           });
       });
-      test("Status 400 - responds with msg 'Limit and/or p queries must be positive integers' for non-integer limits", () => {
+      test("Status 400 - responds with msg 'Bad request' for non-integer limits", () => {
         return request(app)
           .get("/api/articles/1/comments?limit=not-an-int")
           .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).toBe("Limit and p queries must be positive integers");
+            expect(msg).toBe("Bad request");
           });
       });
       test("Status 404 - responds with error object with msg 'End of comments reached - lower your limit or p query' when the p query results in no comments", () => {

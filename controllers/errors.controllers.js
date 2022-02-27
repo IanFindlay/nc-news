@@ -12,7 +12,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res.status(400).send({ msg: "Bad request" });
   } else if (err.code === "23502") {
     res.status(400).send({ msg: "Missing required field" });
-  } else if (["2201W", "2201X", "42703"].includes(err.code)) {
+  } else if (["2201W", "2201X"].includes(err.code)) {
     res
       .status(400)
       .send({ msg: "Limit and p queries must be positive integers" });
