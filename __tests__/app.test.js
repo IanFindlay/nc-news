@@ -510,6 +510,40 @@ describe("app", () => {
     });
   });
 
+  describe("/api/articles/:article_id", () => {
+    describe("DELETE", () => {
+      test("Status 204 - no response sent back", () => {
+        return request(app)
+          .delete("/api/articles/1")
+          .expect(204)
+          .then(() => {
+            return request(app)
+              .get("/api/articles")
+              .expect(200)
+              .then(({ body: { total_count } }) => {
+                expect(total_count).toBe(11);
+              });
+          });
+      });
+      test("404 - responds with msg 'No article matching requested id' when article_id is valid but not currently in the database", () => {
+        return request(app)
+          .delete("/api/articles/999")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("No article matching requested id");
+          });
+      });
+      test("400 - responds with 'Bad request' if requested article_id isn't an integer", () => {
+        return request(app)
+          .delete("/api/articles/not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad request");
+          });
+      });
+    });
+  });
+
   describe("/api/articles/:article_id/comments", () => {
     describe("GET", () => {
       test("Status 200 - responds with an object with a key of comments and a value of an array of comment objects associated with the requested article_id", () => {

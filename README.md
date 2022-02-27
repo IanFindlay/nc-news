@@ -15,6 +15,7 @@ This project is a demonstration of setting up a RESTful api. Written in JavaScri
 - GET a list of articles with the ability to filter by topic, sort by various valid fields, decide upon the sort order and customise the pagination limits and view specific pages
 - GET a specific article
 - PATCH a specific article in order to vote on it
+- DELETE a specific article and all of the comments associated with it
 - POST a new article
 - GET all of the comments associated with a specific article with ability to customise the pagination limits and view specific pages
 - POST a new comment to a specific article
