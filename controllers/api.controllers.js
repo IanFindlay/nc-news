@@ -10,8 +10,21 @@ exports.getEndpoints = (_, res, next) => {
       queries: [],
       expectedStatus: 200,
       exampleResponse: {
-        topics: [
-          { slug: "topic", description: "description of article contents" },
+        topics: [{ slug: "topic", description: "description of topic" }],
+      },
+    },
+
+    "POST /api/topics": {
+      description:
+        "Adds a new topic to the database responding with an object representing the newly created topic",
+      queries: [],
+      expectedStatus: 201,
+      exampleResponse: {
+        topic: [
+          {
+            slug: "new topic",
+            description: "Optional description of the new topic",
+          },
         ],
       },
     },
