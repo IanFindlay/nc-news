@@ -87,7 +87,7 @@ describe("app", () => {
             expect(msg).toBe("Missing required field");
           });
       });
-      test("Status 400 - responds with msg 'Missing required field' if slug already in table", () => {
+      test("Status 400 - responds with msg 'Topic already exists' if slug already in table", () => {
         return request(app)
           .post("/api/topics")
           .send({ slug: "cats", description: "cats already a topic" })
