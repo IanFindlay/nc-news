@@ -627,7 +627,7 @@ describe("app", () => {
     describe("POST", () => {
       test("Status 201 - responds with an object with a key of comment with a value of the new comment object added via the request", () => {
         return request(app)
-          .post("/api/articles/1/comments")
+          .post("/api/articles/6/comments")
           .send({ username: "butter_bridge", body: "New comment" })
           .expect(201)
           .then(({ body: { comment } }) => {
@@ -640,6 +640,14 @@ describe("app", () => {
                 body: "New comment",
               })
             );
+          })
+          .then(() => {
+            return request(app)
+              .get("/api/articles/6/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).toHaveLength(2);
+              });
           });
       });
       test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain username or body property", () => {
