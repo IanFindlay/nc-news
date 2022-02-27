@@ -1,16 +1,24 @@
 const db = require("../db/connection");
 
-exports.selectCommentsByArticleId = (articleId) => {
-  return db
-    .query(
-      `
+exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
+  const offset = (page - 1) * limit;
+  const query = db.query(
+    `
   SELECT comment_id, votes, created_at, author, body
   FROM comments
-  WHERE article_id = $1;
+  WHERE article_id = $1
+  LIMIT ${limit} OFFSET ${offset};
     `,
-      [articleId]
-    )
-    .then(({ rows: comments }) => comments);
+    [articleId]
+  );
+  return Promise.all([offset, query]).then(([offset, { rows: comments }]) => {
+    if (!comments.length && offset)
+      return Promise.reject({
+        status: 404,
+        msg: "End of comments reached - lower your limit or p query",
+      });
+    return comments;
+  });
 };
 
 exports.insertCommentByArticleId = (articleId, newComment) => {

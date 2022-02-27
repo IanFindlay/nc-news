@@ -499,6 +499,72 @@ describe("app", () => {
             expect(comments).toEqual([]);
           });
       });
+      test("Status 200 - default limit is set to 10 comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(10);
+          });
+      });
+      test("Status 200 - limit can be set by a query", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=5")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(5);
+          });
+      });
+      test("Status 200 - page can be set via a 'p' query", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=2")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(1);
+          });
+      });
+      test("Status 400 - 'Limit and p queries must be positive integers' if p query isn't an integer", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 400 - responds with msg 'Limit and p queries must be positive integers' for negative p queries", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=-5")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 400 - responds with msg 'Limit and p queries must be positive integers' for negative limits", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=-5")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 400 - responds with msg 'Limit and/or p queries must be positive integers' for non-integer limits", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 404 - responds with error object with msg 'End of comments reached - lower your limit or p query' when the p query results in no comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?p=100")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "End of comments reached - lower your limit or p query"
+            );
+          });
+      });
       test("Status 404 - responds with msg 'No article matching requested id' when article_id is valid but there isn't an article with that id currently in the database", () => {
         return request(app)
           .get("/api/articles/9999/comments")
