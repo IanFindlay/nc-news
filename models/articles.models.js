@@ -38,7 +38,7 @@ exports.updateArticleById = (articleId, incVotes) => {
     });
 };
 
-exports.selectArticles = (sortBy, order, topic, limit, page) => {
+exports.selectArticles = (sortBy, order, topic, limit = 10, page = 1) => {
   const validCols = [
     "author",
     "title",
@@ -61,8 +61,6 @@ exports.selectArticles = (sortBy, order, topic, limit, page) => {
 
   order = order === "asc" ? "ASC" : "DESC";
 
-  if (!limit) limit = 10;
-  if (!page) page = 1;
   const offset = (page - 1) * limit;
 
   let queryStr = `
@@ -70,13 +68,14 @@ exports.selectArticles = (sortBy, order, topic, limit, page) => {
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id `;
 
-  prepValues = [];
+  let prepValues = [];
   if (topic) {
     queryStr += `WHERE topic LIKE $1 `;
     prepValues.push(`${topic}`);
   }
 
   let noLimitQuery = queryStr;
+  let noLimitPrep = [...prepValues];
 
   noLimitQuery += `
     GROUP BY articles.article_id
@@ -85,9 +84,11 @@ exports.selectArticles = (sortBy, order, topic, limit, page) => {
   queryStr += `
     GROUP BY articles.article_id
     ORDER BY ${sortBy} ${order}
-    LIMIT ${limit} OFFSET ${offset}`;
+    LIMIT $${prepValues.length + 1} OFFSET $${prepValues.length + 2}`;
 
-  const noLimit = db.query(noLimitQuery, prepValues);
+  prepValues.push(limit, offset);
+
+  const noLimit = db.query(noLimitQuery, noLimitPrep);
   const limited = db.query(queryStr, prepValues);
   return Promise.all([noLimit, limited]).then(
     ([{ rows: noLimitArticles }, { rows: articles }]) => {

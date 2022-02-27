@@ -7,9 +7,9 @@ exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
   SELECT comment_id, votes, created_at, author, body
   FROM comments
   WHERE article_id = $1
-  LIMIT ${limit} OFFSET ${offset};
+  LIMIT $2 OFFSET $3;
     `,
-    [articleId]
+    [articleId, limit, offset]
   );
   return Promise.all([offset, query]).then(([offset, { rows: comments }]) => {
     if (!comments.length && offset)
