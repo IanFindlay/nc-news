@@ -147,6 +147,14 @@ exports.getEndpoints = (_, res, next) => {
       },
     },
 
+    "DELETE /api/articles/:article_id": {
+      description:
+        "Removes the article specified from the database and all of the comments associated with it",
+      queries: [],
+      expectedStatus: 204,
+      exampleResponse: {},
+    },
+
     "GET /api/articles/:article_id/comments": {
       description:
         "Responds with an array of all of the comments associated with the article specified in the article_id parameter",
