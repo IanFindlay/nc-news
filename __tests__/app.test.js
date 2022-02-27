@@ -1,11 +1,9 @@
 const app = require("../app");
-const { checkExists } = require("../db/helpers/utils");
 const db = require("../db/connection");
 const data = require("../db/data");
 const seed = require("../db/seeds/seed");
 
 const request = require("supertest");
-const { totalCount } = require("../db/connection");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
