@@ -38,7 +38,7 @@ exports.updateArticleById = (articleId, incVotes) => {
     });
 };
 
-exports.selectArticles = (sortBy, order, topic) => {
+exports.selectArticles = (sortBy, order, topic, limit, page) => {
   const validCols = [
     "author",
     "title",
@@ -61,6 +61,10 @@ exports.selectArticles = (sortBy, order, topic) => {
 
   order = order === "asc" ? "ASC" : "DESC";
 
+  if (!limit) limit = 10;
+  if (!page) page = 1;
+  const offset = (page - 1) * limit;
+
   let queryStr = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, COUNT(comments.comment_id)::INT AS comment_count
     FROM articles
@@ -72,18 +76,35 @@ exports.selectArticles = (sortBy, order, topic) => {
     prepValues.push(`${topic}`);
   }
 
-  queryStr += `
+  let noLimitQuery = queryStr;
+
+  noLimitQuery += `
     GROUP BY articles.article_id
     ORDER BY ${sortBy} ${order};`;
 
-  return db.query(queryStr, prepValues).then(({ rows: articles }) => {
-    if (!articles.length)
-      return Promise.reject({
-        status: 404,
-        msg: "No articles found with that topic",
-      });
-    return articles;
-  });
+  queryStr += `
+    GROUP BY articles.article_id
+    ORDER BY ${sortBy} ${order}
+    LIMIT ${limit} OFFSET ${offset}`;
+
+  const noLimit = db.query(noLimitQuery, prepValues);
+  const limited = db.query(queryStr, prepValues);
+  return Promise.all([noLimit, limited]).then(
+    ([{ rows: noLimitArticles }, { rows: articles }]) => {
+      if (!noLimitArticles.length)
+        return Promise.reject({
+          status: 404,
+          msg: "No articles found with that topic",
+        });
+      if (!articles.length) {
+        return Promise.reject({
+          status: 404,
+          msg: "End of articles reached - lower your limit or p query",
+        });
+      }
+      return [articles, noLimitArticles.length];
+    }
+  );
 };
 
 exports.insertArticle = (newArticle) => {

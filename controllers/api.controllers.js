@@ -42,11 +42,14 @@ exports.getEndpoints = (_, res, next) => {
     },
 
     "GET /api/articles": {
-      description: "Responds with an array of articles",
+      description:
+        "Responds with an array of paginated articles and a total_count of all the articles matching the filter",
       queries: [
         "sort_by (author | title | article_id | topic | votes | date | comment_count )",
         "order (asc | desc)",
         "filter (topic - exact match required)",
+        "limit - number of articles to display per page (defaults to 10)",
+        "p - which page of results to retrieve (defaults to 1)",
       ],
       expectedStatus: 200,
       exampleResponse: {
@@ -62,6 +65,7 @@ exports.getEndpoints = (_, res, next) => {
           },
         ],
       },
+      total_count: 20,
     },
 
     "POST /api/articles": {
