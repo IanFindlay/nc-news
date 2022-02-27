@@ -5,6 +5,7 @@ const data = require("../db/data");
 const seed = require("../db/seeds/seed");
 
 const request = require("supertest");
+const { totalCount } = require("../db/connection");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -223,12 +224,20 @@ describe("app", () => {
 
   describe("/api/articles", () => {
     describe("GET", () => {
+      test("Status 200 - return object has a total_count property", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { total_count } }) => {
+            expect(total_count).toBe(12);
+          });
+      });
       test("Status 200 - responds with an object containing a key of articles with a value of an array of article objects sorted by date (created_at) in descending order", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles).toHaveLength(12);
+          .then(({ body: { articles, total_count } }) => {
+            expect(total_count).toBe(12);
             expect(articles).toBeSortedBy("created_at", { descending: true });
             articles.forEach((article) => {
               expect(article).toEqual(
@@ -287,17 +296,75 @@ describe("app", () => {
         return request(app)
           .get("/api/articles?topic=mitch")
           .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles).toHaveLength(11);
+          .then(({ body: { total_count } }) => {
+            expect(total_count).toBe(11);
           });
       });
       test("Status 200 - user can combine queries", () => {
         return request(app)
           .get("/api/articles?topic=mitch&sort_by=author&order=asc")
           .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles).toHaveLength(11);
+          .then(({ body: { articles, total_count } }) => {
+            expect(total_count).toBe(11);
             expect(articles).toBeSortedBy("author");
+          });
+      });
+      test("Status 200 - default limit is set to 10 articles", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(10);
+          });
+      });
+      test("Status 200 - limit can be set by a query", () => {
+        return request(app)
+          .get("/api/articles?limit=5")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(5);
+          });
+      });
+      test("Status 200 - page can be set via a 'p' query", () => {
+        return request(app)
+          .get("/api/articles?p=2")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(2);
+          });
+      });
+      test("Status 400 - 'Limit and p queries must be positive integers' if p query isn't an integer", () => {
+        return request(app)
+          .get("/api/articles?p=not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 400 - responds with msg 'Limit must be a positive integer' for negative limits", () => {
+        return request(app)
+          .get("/api/articles?limit=-5")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 400 - responds with msg 'Limit and/or p queries must be positive integers' for non-integer limits", () => {
+        return request(app)
+          .get("/api/articles?limit=not-an-int")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Limit and p queries must be positive integers");
+          });
+      });
+      test("Status 404 - responds with error object with msg 'End of articles reached - lower your limit or p query' when the p query results in no articles", () => {
+        return request(app)
+          .get("/api/articles?p=100")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe(
+              "End of articles reached - lower your limit or p query"
+            );
           });
       });
       test("Status 404 - responds with error object with msg 'No articles found with that topic' when the topic query results in no articles", () => {
@@ -354,8 +421,8 @@ describe("app", () => {
             return request(app)
               .get("/api/articles")
               .expect(200)
-              .then(({ body: { articles } }) => {
-                expect(articles).toHaveLength(13);
+              .then(({ body: { total_count } }) => {
+                expect(total_count).toBe(13);
               });
           });
       });

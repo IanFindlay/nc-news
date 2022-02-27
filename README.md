@@ -11,7 +11,7 @@ This project is a demonstration of setting up a RESTful api. Written in JavaScri
 - GET a list of all of the available endpoints
 - GET a list of topics covered by the articles
 - GET a list of user that have posted comments to the articles
-- GET a list of articles
+- GET a list of articles with the ability to filter by topic, sort by various valid fields, decide upon the sort order and customise the pagination limits and view specific pages
 - GET a specific article
 - PATCH a specific article in order to vote on it
 - POST a new article
