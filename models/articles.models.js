@@ -126,3 +126,18 @@ exports.insertArticle = (newArticle) => {
       return article;
     });
 };
+
+exports.deleteArticleById = (articleId) => {
+  return db
+    .query("DELETE FROM articles WHERE article_id = $1 RETURNING *;", [
+      articleId,
+    ])
+    .then(({ rows: [article] }) => {
+      if (!article)
+        return Promise.reject({
+          status: 404,
+          msg: "No article matching requested id",
+        });
+      return article;
+    });
+};

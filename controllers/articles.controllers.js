@@ -3,6 +3,7 @@ const {
   updateArticleById,
   selectArticles,
   insertArticle,
+  deleteArticleById,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -38,6 +39,15 @@ exports.postArticle = (req, res, next) => {
   insertArticle(newArticle)
     .then((article) => {
       res.status(201).send({ article });
+    })
+    .catch(next);
+};
+
+exports.removeArticleById = (req, res, next) => {
+  const { article_id: articleId } = req.params;
+  return deleteArticleById(articleId)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(next);
 };
