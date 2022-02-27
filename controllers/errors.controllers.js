@@ -16,6 +16,8 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res
       .status(400)
       .send({ msg: "Limit and p queries must be positive integers" });
+  } else if (err.code === "23505") {
+    res.status(400).send({ msg: "Topic already exists" });
   } else next(err);
 };
 

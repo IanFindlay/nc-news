@@ -55,6 +55,48 @@ describe("app", () => {
           });
       });
     });
+    describe("POST", () => {
+      test("Status 201 - responds with an object with a key of topic with a value of the new topic object added via the request", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({ slug: "topic name here", description: "description here" })
+          .expect(201)
+          .then(({ body: { topic } }) => {
+            expect(topic).toEqual(
+              expect.objectContaining({
+                slug: "topic name here",
+                description: "description here",
+              })
+            );
+          })
+          .then(() => {
+            return request(app)
+              .get("/api/topics")
+              .expect(200)
+              .then(({ body: { topics } }) => {
+                expect(topics).toHaveLength(4);
+              });
+          });
+      });
+      test("Status 400 - responds with msg 'Missing required field' if request body doesn't contain slug", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({ description: "No slug" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Missing required field");
+          });
+      });
+      test("Status 400 - responds with msg 'Missing required field' if slug already in table", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({ slug: "cats", description: "cats already a topic" })
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Topic already exists");
+          });
+      });
+    });
   });
 
   describe("api/articles/:article_id", () => {
