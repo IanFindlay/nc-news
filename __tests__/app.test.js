@@ -589,7 +589,7 @@ describe("app", () => {
             expect(comments).toHaveLength(5);
           });
       });
-      test.only("Status 200 - limit of 0 returns all comments", () => {
+      test("Status 200 - limit of 0 returns all comments", () => {
         return request(app)
           .get("/api/articles/1/comments?limit=0")
           .expect(200)
