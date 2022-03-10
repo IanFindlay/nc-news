@@ -589,6 +589,14 @@ describe("app", () => {
             expect(comments).toHaveLength(5);
           });
       });
+      test("Status 200 - limit of 0 returns all comments", () => {
+        return request(app)
+          .get("/api/articles/1/comments?limit=0")
+          .expect(200)
+          .then(({ body: { comments } }) => {
+            expect(comments).toHaveLength(11);
+          });
+      });
       test("Status 200 - page can be set via a 'p' query", () => {
         return request(app)
           .get("/api/articles/1/comments?p=2")

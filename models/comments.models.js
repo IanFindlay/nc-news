@@ -2,15 +2,21 @@ const db = require("../db/connection");
 
 exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
   const offset = (page - 1) * limit;
-  const query = db.query(
-    `
+
+  let queryStr = `
   SELECT comment_id, votes, created_at, author, body
   FROM comments
   WHERE article_id = $1
-  LIMIT $2 OFFSET $3;
-    `,
-    [articleId, limit, offset]
-  );
+  `;
+
+  const prepStatements = [articleId];
+  if (limit === "0") queryStr += "LIMIT ALL OFFSET 0";
+  else {
+    queryStr += "LIMIT $2 OFFSET $3;";
+    prepStatements.push(limit, offset);
+  }
+
+  const query = db.query(queryStr, prepStatements);
   return Promise.all([offset, query]).then(([offset, { rows: comments }]) => {
     if (!comments.length && offset)
       return Promise.reject({
