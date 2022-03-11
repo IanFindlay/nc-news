@@ -84,9 +84,15 @@ exports.selectArticles = (sortBy, order, topic, limit = 10, page = 1) => {
   queryStr += `
     GROUP BY articles.article_id
     ORDER BY ${sortBy} ${order}
-    LIMIT $${prepValues.length + 1} OFFSET $${prepValues.length + 2}`;
+    `;
 
-  prepValues.push(limit, offset);
+  if (limit === "0") queryStr += "LIMIT ALL OFFSET 0;";
+  else {
+    queryStr += `LIMIT $${prepValues.length + 1} OFFSET $${
+      prepValues.length + 2
+    };`;
+    prepValues.push(limit, offset);
+  }
 
   const noLimit = db.query(noLimitQuery, noLimitPrep);
   const limited = db.query(queryStr, prepValues);

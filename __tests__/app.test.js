@@ -365,6 +365,14 @@ describe("app", () => {
             expect(articles).toHaveLength(5);
           });
       });
+      test("Status 200 - limit of 0 returns all articles", () => {
+        return request(app)
+          .get("/api/articles?limit=0")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles).toHaveLength(12);
+          });
+      });
       test("Status 200 - page can be set via a 'p' query", () => {
         return request(app)
           .get("/api/articles?p=2")
