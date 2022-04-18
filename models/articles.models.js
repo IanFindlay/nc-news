@@ -147,3 +147,9 @@ exports.deleteArticleById = (articleId) => {
       return article;
     });
 };
+
+exports.selectArticleIds = () => {
+  return db
+    .query("SELECT article_id FROM articles;")
+    .then(({ rows: articleIds }) => articleIds);
+};

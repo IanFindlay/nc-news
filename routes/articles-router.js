@@ -6,6 +6,7 @@ const {
   patchArticleById,
   postArticle,
   removeArticleById,
+  getRandomArticle,
 } = require("../controllers/articles.controllers");
 
 const {
@@ -14,6 +15,8 @@ const {
 } = require("../controllers/comments.controllers");
 
 articlesRouter.route("/").get(getArticles).post(postArticle);
+
+articlesRouter.get("/random", getRandomArticle);
 
 articlesRouter
   .route("/:article_id")
