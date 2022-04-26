@@ -18,7 +18,7 @@ This project is a demonstration of setting up a RESTful api. Written in JavaScri
 - DELETE a specific article and all of the comments associated with it
 - POST a new article
 - GET an articles selected at random
-- GET all of the comments associated with a specific article with ability to customise the pagination limits and view specific pages
+- GET all of the comments associated with a specific article sorted newest to oldest with pagination and limit queries available
 - POST a new comment to a specific article
 - DELETE a specific comment
 - PATCH a specific comment in order to vote on it
