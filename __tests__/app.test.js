@@ -555,12 +555,13 @@ describe("app", () => {
 
   describe("/api/articles/:article_id/comments", () => {
     describe("GET", () => {
-      test("Status 200 - responds with an object with a key of comments and a value of an array of comment objects associated with the requested article_id", () => {
+      test("Status 200 - responds with an object with a key of comments and a value of an array of comment objects associated with the requested article_id ordered by their dates in descending order", () => {
         return request(app)
           .get("/api/articles/9/comments")
           .expect(200)
           .then(({ body: { comments } }) => {
             expect(comments).toHaveLength(2);
+            expect(comments).toBeSortedBy("created_at", { descending: true });
             comments.forEach((comment) => {
               expect(comment).toEqual(
                 expect.objectContaining({
