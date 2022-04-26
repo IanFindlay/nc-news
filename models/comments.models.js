@@ -23,7 +23,7 @@ exports.selectCommentsByArticleId = (articleId, limit = 10, page = 1) => {
         status: 404,
         msg: "End of comments reached - lower your limit or p query",
       });
-    return comments;
+    return comments.sort((b, a) => a.created_at - b.created_at);
   });
 };
 
