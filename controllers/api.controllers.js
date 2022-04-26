@@ -195,6 +195,24 @@ exports.getEndpoints = (_, res, next) => {
       },
     },
 
+    "GET /api/articles/random": {
+      description: "Responds with a randomly chosen article object",
+      queries: [],
+      expectedStatus: 200,
+      exampleResponse: {
+        article: {
+          article_id: "number",
+          author: "author",
+          title: "title",
+          created_at: "date",
+          topic: "topic",
+          votes: "number",
+          comment_count: "number of comments on this article",
+          body: "The content of the article",
+        },
+      },
+    },
+
     "DELETE /api/comments/:comment_id": {
       description: "Deletes the comment matching the comment_id parameter",
       queries: [],

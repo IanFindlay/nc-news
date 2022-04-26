@@ -4,6 +4,7 @@ const {
   selectArticles,
   insertArticle,
   deleteArticleById,
+  selectArticleIds,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -48,6 +49,19 @@ exports.removeArticleById = (req, res, next) => {
   return deleteArticleById(articleId)
     .then(() => {
       res.status(204).send();
+    })
+    .catch(next);
+};
+
+exports.getRandomArticle = (_, res, next) => {
+  selectArticleIds()
+    .then((articleIds) => {
+      chosenId =
+        articleIds[Math.floor(Math.random() * articleIds.length)].article_id;
+      return selectArticleById(chosenId);
+    })
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

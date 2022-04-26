@@ -745,6 +745,29 @@ describe("app", () => {
     });
   });
 
+  describe("/api/articles/random", () => {
+    describe("GET", () => {
+      test("Status 200 - responds with an object with a key of article that contains a random article", () => {
+        return request(app)
+          .get("/api/articles/random")
+          .expect(200)
+          .then(({ body: { article } }) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+      });
+    });
+  });
+
   describe("/api/comments/:comment_id", () => {
     describe("DELETE", () => {
       test("Status 204 - no response sent back", () => {
