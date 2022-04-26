@@ -278,6 +278,7 @@ describe("app", () => {
           .expect(200)
           .then(({ body: { articles, total_count } }) => {
             expect(total_count).toBe(12);
+            expect(articles.length > 0).toBe(true);
             expect(articles).toBeSortedBy("created_at", { descending: true });
             articles.forEach((article) => {
               expect(article).toEqual(
